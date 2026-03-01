@@ -21,11 +21,11 @@ The primary view. You open the game and you're here. This replaces the old MapSc
 (node selection map) entirely. The CRT terminal remains as a route planning tool inside
 the safehouse and vehicle, but the node-picker map is gone — the overworld IS the map.
 
-### Isometric Parallax View
+### Top-Down Isometric View
 
-The overworld renders as an isometric parallax scene — similar to the existing Traversal
-Scene's visual style. Your vehicle is your character on the overworld. Buildings, nodes,
-and terrain features surround you based on your GPS position and the current biome.
+The overworld renders as a top-down camera with isometric sprites. Not isometric parallax —
+a flat top-down perspective with iso-style buildings, props, and characters drawn in ¾ view.
+Think classic top-down RPG camera with isometric art style.
 
 Buildings use a rotational sprite trick (like Orna) — a single sprite rotates to face the
 camera as the player moves around it. This avoids building 8-directional sprite sets for
@@ -33,7 +33,7 @@ every structure. The visual reads as 3D without actually being 3D.
 
 ### What You See
 
-- Your vehicle (the player character — always present on overworld)
+- Your vehicle (on roads) or character on foot (off-road)
 - Biome-appropriate terrain (ground, props, ambient effects)
 - Nearby buildings and structures (rotational sprites)
 - Real-world location nodes (interactable points)
@@ -42,12 +42,28 @@ every structure. The visual reads as 3D without actually being 3D.
 - Weather effects driven by real-world weather data
 - Time-of-day from RealtimeTOD (already built)
 
-### The Vehicle IS the Player
+### Road vs Off-Road
 
-On the overworld, you are your vehicle. There is no separate walking character. The
-vehicle is how you exist in the world, how other players see you, and how you interact
-with nodes and POIs. Exiting the vehicle happens when you enter a node (combat, safehouse,
-haven) — that's when you're on foot inside a specific scene.
+The overworld has two movement modes that swap seamlessly:
+
+**On Road — Vehicle**
+- Roads always show the vehicle sprite
+- Routes and node locations follow roads
+- Fuel consumed by distance traveled
+- Vehicle follows real road geometry on the map
+- Faster travel, access to route-based nodes
+
+**Off-Road — On Foot**
+- Stepping off a road transitions to the character on foot
+- Vehicle parks at the road edge (visible, stays put)
+- Freeform exploration — no roads, no routes, move anywhere
+- Scavenging, hidden loot caches, different enemy encounters
+- No fuel cost for off-road movement
+- Stepping back onto a road returns to the vehicle
+- Smooth swap animation between vehicle and character
+
+The vehicle is your road identity. The character is your off-road identity. Both exist
+on the same overworld — the swap is contextual based on terrain.
 
 ### Movement and Route Travel
 
@@ -55,12 +71,17 @@ The overworld handles ALL travel between locations. There is no separate travers
 for moving between nodes. When you exit the safehouse on a planned route:
 
 1. Plan route on CRT terminal (always loops back to safehouse)
-2. Exit safehouse → you're on the overworld in your vehicle
+2. Exit safehouse → you're on the overworld in your vehicle on the road
 3. Vehicle follows real roads to the first destination on your route
 4. Arrive at node → tap to enter (combat, haven, etc.)
 5. Complete the node → back on the overworld
 6. Vehicle continues along real roads to next node on route
 7. Repeat until route is complete → you're back at safehouse
+
+At any point during route travel, the player can step off-road to explore on foot.
+The vehicle parks at the road edge. The player walks freely through the biome terrain —
+scavenging, finding hidden caches, encountering off-road enemies. Returning to the
+road resumes vehicle travel along the route.
 
 The overworld IS the travel. The journey between nodes plays out visually on the overworld
 with biome terrain, weather, and ambient life scrolling past as you move.
@@ -232,12 +253,62 @@ unlimited. Location tracking opt-in gives free range. Fuel is for players who wa
 extended range without continuous GPS, or who play from a fixed location.
 
 
-## Driving Mode (Future — Separate from Overworld)
+## Road Trip Mode (Separate from Overworld)
 
-Driving is its own game mode entirely, separate from overworld route travel. It will be
-designed and expanded later. It is NOT the same as traveling between nodes on the
-overworld. The overworld handles route travel. Driving mode is a distinct gameplay
-experience to be defined in a future design pass.
+Road Trip is a distinct game mode, completely separate from overworld navigation. The
+overworld is local area exploration and combat. Road Trip is long-distance travel with
+its own UI, pacing, and reward structure.
+
+### How It Works
+
+You set a real-world GPS destination — anywhere. Could be across town, across the state,
+across the country. The game tracks your actual drive there. Road Trip mode has its own
+full-screen UI focused on the journey itself.
+
+### What Happens During a Road Trip
+
+- **Biome road signs** appear when you cross biome reach boundaries — "NOW ENTERING:
+  ASHVEIL" with biome-appropriate styling and ambient shift
+- **Distance tracker** ticks up in real-time as you drive, showing total distance
+  traveled and distance remaining
+- **Fuel consumed** by real distance driven — longer trips cost more fuel
+- **Passive loot and XP** awarded from POIs you pass along the route — gas stations,
+  landmarks, buildings all generate drive-by rewards
+- **Biome terrain shifts** as you cross boundaries — the visual backdrop changes from
+  Ironfield smog to Mirelands fog to Scorchflats dust
+- **Weather shifts** with real conditions along the route — weather updates as you
+  move through different real-world weather zones
+- **Landmarks pop up** as you approach them — named locations with bonus rewards
+- **Other players visible** on the same stretch of road — see who else is Road Tripping
+  through the same biome reach
+
+### No Combat Interruptions
+
+Road Trip mode does NOT interrupt you with combat encounters. You're driving. The
+experience is passive, ambient, rewarding. If you want to fight, you pull over at
+a node along your route and enter it manually. Road Trip is the scenic drive. The
+overworld is where you get your hands dirty.
+
+### Road Trip Milestones
+
+Achievements and tracking specific to Road Trip mode:
+
+- **Distance achievements** — 10km, 50km, 100km, 500km, 1000km driven in Road Trip
+- **Biome collection** — visit all 6 biomes via Road Trip (Ironfield, Mirelands,
+  Scorchflats, Hollows, Tidemarsh, Ashveil)
+- **Longest single trip** — furthest distance in one continuous Road Trip session
+- **Furthest from safehouse** — maximum distance between your safehouse and your
+  Road Trip position
+- **Biome streak** — pass through the most biome boundaries in a single trip
+- **Road Warrior** — cumulative lifetime Road Trip distance
+
+### Distinct from Overworld
+
+The overworld is local. You walk around, you drive between nearby nodes, you explore
+on foot, you fight. Road Trip is macro-scale. You're covering real distance, watching
+the world change, collecting passive rewards. Different UI, different pacing, different
+rewards. Both use GPS. Both exist on the same biome grid. But they serve completely
+different gameplay needs.
 
 
 ## Multiplayer Presence
@@ -296,8 +367,9 @@ The game must work without GPS.
 ## What We Build (In Order)
 
 ### Phase 1: Overworld Foundation
-- Isometric parallax overworld scene (new primary view, replaces MapScene)
-- Vehicle as player character on overworld
+- Top-down overworld scene with iso sprites (new primary view, replaces MapScene)
+- Vehicle on roads, character on foot off-road (smooth swap animation)
+- Road/off-road terrain distinction (roads consume fuel, off-road is free exploration)
 - Rotational building sprites
 - GPS position → vehicle movement on overworld
 - Biome Reach grid generation (Perlin noise, global seed)
@@ -333,9 +405,16 @@ The game must work without GPS.
 - Biome-reach-level visibility (not precise GPS)
 - Foundation for future social features
 
-### Phase 6: Driving Mode (Future)
-- Full driving gameplay (separate from overworld travel)
-- Design TBD
+### Phase 6: Road Trip Mode
+- Road Trip scene with long-distance travel UI
+- Real GPS destination setting and route tracking
+- Biome road signs at reach boundaries
+- Distance tracker, fuel consumption by real distance
+- Passive loot/XP from POIs along route
+- Biome terrain and weather shifts during travel
+- Landmark pop-ups with bonus rewards
+- Road Trip milestones and achievements (distance, biome collection, furthest from safehouse)
+- Other player visibility on same road stretch
 
 ### Phase 7: Server + Persistence
 - Auth, accounts
