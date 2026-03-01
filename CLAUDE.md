@@ -38,6 +38,9 @@ sed 's|./assets/|./|g' dist/index.html > <deploy-dir>/index.html
 ```
 Live at: lattymoy.github.io (all files flat in repo root, no assets/ subfolder)
 
+**Post-build verification (MANDATORY after every build + flatten):**
+Confirm every `<script src>` and `<link href>` in index.html points to a file that actually exists in the repo root. No `./assets/` prefix — all paths must be `./filename.js`. If any path references `./assets/`, the deploy will black-screen (404 on every module load).
+
 ## GPS RPG Architecture
 
 ### Biome Grid (core/biomeGrid.js)
