@@ -8,6 +8,10 @@
     <meta http-equiv="Expires" content="0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192.png">
+    <link rel="apple-touch-icon" href="./assets/icon-192.png">
     <title>VESTIGE GRIM</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,14 +19,22 @@
         #game-container { width: 100%; height: 100%; }
         canvas { display: block; image-rendering: pixelated; }
     </style>
-  <script type="module" crossorigin src="./assets/index-CvvLp_4d.js"></script>
+  <script type="module" crossorigin src="./assets/index-DRu30gYW.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/phaser-B61OQUcB.js">
   <link rel="modulepreload" crossorigin href="./assets/data-DSUhBEMm.js">
-  <link rel="modulepreload" crossorigin href="./assets/core-BjD8V7aG.js">
-  <link rel="modulepreload" crossorigin href="./assets/client-DQNqMBXe.js">
-  <link rel="modulepreload" crossorigin href="./assets/scenes-DUr2Ud9b.js">
+  <link rel="modulepreload" crossorigin href="./assets/core-Db4F-dxI.js">
+  <link rel="modulepreload" crossorigin href="./assets/client-D-fjE-w-.js">
+  <link rel="modulepreload" crossorigin href="./assets/scenes-APKBNgJ1.js">
 </head>
 <body>
     <div id="game-container"></div>
+    <script>
+        // Register service worker for PWA + offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('[SW] Registered:', reg.scope))
+                .catch(err => console.warn('[SW] Registration failed:', err));
+        }
+    </script>
 </body>
 </html>
