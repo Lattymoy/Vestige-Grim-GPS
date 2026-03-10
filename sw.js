@@ -5,7 +5,7 @@
 //   API calls (/auth, /save, /nodes, etc.) → Network-only (don't cache API)
 //   OSM/tile fetches → Cache-first with network fallback
 
-const CACHE_VERSION = 'vestige-v1';
+const CACHE_VERSION = 'vestige-v2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const TILE_CACHE = `${CACHE_VERSION}-tiles`;
 
@@ -67,11 +67,12 @@ self.addEventListener('fetch', (event) => {
     }
 
     // Tile data (OSM, MS Buildings) — cache-first
+    // Only match actual tile/building data paths, not same-origin JS bundles
     if (url.pathname.startsWith('/buildings/tile/') ||
         url.hostname.includes('overpass-api') ||
         url.hostname.includes('tile.openstreetmap') ||
         url.hostname.includes('raw.githubusercontent.com') ||
-        url.hostname.includes('lattymoy.github.io')) {
+        (url.hostname.includes('lattymoy.github.io') && (url.pathname.endsWith('.json') || url.pathname.includes('/buildings/')))) {
         event.respondWith(cacheFirst(event.request, TILE_CACHE));
         return;
     }
