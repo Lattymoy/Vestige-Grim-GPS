@@ -5,7 +5,7 @@
 //   API calls (/auth, /save, /nodes, etc.) → Network-only (don't cache API)
 //   OSM/tile fetches → Cache-first with network fallback
 
-const CACHE_VERSION = 'vestige-v10';
+const CACHE_VERSION = 'vestige-v11';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const TILE_CACHE = `${CACHE_VERSION}-tiles`;
 
