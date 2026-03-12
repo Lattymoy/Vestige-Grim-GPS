@@ -67,7 +67,6 @@ self.addEventListener('fetch', (event) => {
     }
 
     // Tile data (OSM, MS Buildings) — cache-first
-    // Only match actual tile/building data paths, not same-origin JS bundles
     if (url.pathname.startsWith('/buildings/tile/') ||
         url.hostname.includes('overpass-api') ||
         url.hostname.includes('tile.openstreetmap') ||
